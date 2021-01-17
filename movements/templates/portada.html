@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %} Movimientos {% endblock %}
+
+{% block bloque_de_formato %}
+        <h1>Movimientos</h1>
+        <form action="compra">
+                <input type="submit" value="+">
+        </form>
+        <table>
+                <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>From</th>
+                        <th>Cantidad</th>
+                        <th>To</th>
+                        <th>Cantidad</th>
+                        <th>P.U</th>
+                </tr>
+        {% for registro in datos %}          
+                <tr>
+                        
+                                <td>{{ registro[0] }}</td>
+                                <td>{{ registro[1] }}</td>
+                                <td>{{ registro[2] }}</td>
+                                <td>{{ registro[3] }}</td>
+                                <td>{{ registro[4] }}</td>
+                                <td>{{ registro[5] }}</td>
+                                <td>{{ registro[6] }}</td>
+                        
+                </tr>  
+        {% endfor %}    
+
+        </table>
+{% endblock %}

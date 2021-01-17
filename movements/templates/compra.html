@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %} Compra de cryptos {% endblock %}
+
+{% block bloque_de_formato %}
+        <H1>Compra de Cryptos</H1>
+        <form action="compra" method="post">
+                <div class="field">
+                        <label for="from">From</label>
+                        <input type="text" name="from">
+                </div>    
+                <div class="field">
+                        <label for="from">To</label>
+                        <input type="text" name="to">
+                </div>    
+                <div class="field">
+                        <label for="from">Q</label>
+                        <input type="number" name="Q">
+                </div>  
+                <div class="field">     
+                        <label for="from">P.U</label>
+                        <input type="number" name="P.U">
+                <div class="field">
+                        <input type="submit" value="Aceptar">                        
+                </div>
+                <div class="field">
+                        <input type="submit" value="Cancelar">                        
+                </div>
+                </div>        
+        </form>
+
+{% endblock %}
