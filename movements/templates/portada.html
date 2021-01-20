@@ -4,9 +4,7 @@
 
 {% block bloque_de_formato %}
         <h1>Movimientos</h1>
-        <form action="compra">
-                <input type="submit" value="+">
-        </form>
+        
         <table>
                 <tr>
                         <th>Fecha</th>
@@ -17,7 +15,7 @@
                         <th>Cantidad</th>
                         <th>P.U</th>
                 </tr>
-        {% for registro in datos %}          
+        {% for registro in movimientos %}          
                 <tr>
                         
                                 <td>{{ registro[0] }}</td>
@@ -29,7 +27,13 @@
                                 <td>{{ registro[6] }}</td>
                         
                 </tr>  
+        
         {% endfor %}    
-
         </table>
+        <form action="compra">
+                <input type="submit" value="+">
+        </form>        
+        <form action="status">
+                <input type="submit" value="Estado">
+        </form>
 {% endblock %}

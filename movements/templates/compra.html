@@ -6,20 +6,32 @@
         <H1>Compra de Cryptos</H1>
         <form action="compra" method="post">
                 <div class="field">
-                        <label for="from">From</label>
-                        <input type="text" name="from">
+                        <label for="fromMoneda">From</label>
+                        <select name="fromMoneda" id="monedas">
+                                {% for moneda in monedas %} 
+                                  <option value="{{ moneda }}">{{ moneda }}</option>
+                                {% endfor %} 
+                        </select> 
+                </div>
+                <div class="field">
+                        <label for="cantidadFrom">Cantidad</label>
+                        <input type="number" name="cantidadFrom">
+                </div>      
+                <div class="field">
+                        <label for="toMoneda">To</label>
+                        <select name="toMoneda" id="monedas">
+                                {% for moneda in monedas %} 
+                                  <option value="{{ moneda }}">{{ moneda }}</option>
+                                {% endfor %} 
+                        </select> 
                 </div>    
                 <div class="field">
-                        <label for="from">To</label>
-                        <input type="text" name="to">
-                </div>    
-                <div class="field">
-                        <label for="from">Q</label>
-                        <input type="number" name="Q">
+                        <label for="cantidadTo">Cantidad</label>
+                        <input type="number" name="cantidadTo">
                 </div>  
                 <div class="field">     
-                        <label for="from">P.U</label>
-                        <input type="number" name="P.U">
+                        <label for="precioUnitario">Precio Unitario</label>
+                        <input type="number" name="precioUnitario">
                 <div class="field">
                         <input type="submit" value="Aceptar">                        
                 </div>

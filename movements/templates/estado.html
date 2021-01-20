@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %} Estado de la inversión {% endblock %}
+
+{% block bloque_de_formato %}
+        <H1>Estado de la inversión</H1>
+        <form action="estado" method="get">
+                <div class="field">
+                        <label for="from">Invertido</label>
+                        <input type="text" name="invertido">
+                </div>
+                <div class="field">
+                        <label for="from">Valor actual</label>
+                        <input type="number" name="valorActual">
+                </div>                      
+                <div class="field">
+                        <input type="submit" value="Cancelar">                                        
+                </div>                
+                </div>        
+        </form>
+
+{% endblock %}
