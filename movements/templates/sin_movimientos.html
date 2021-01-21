@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+
+        <li><a href="/compra">Compra de Cryptos</a></li>
+        <li><a href="/estado">Estado de la inversión</a></li>
+        <li>Movimientos</li>
+      </ul> 
+
+{% endblock %}
+
+{% block h2 %}Movimientos{% endblock %}
+
+{% block bloque_de_formato %}        
+        <h3>No hay movimientos</h3>        
+        </table>
+        <form action="compra">
+                <input type="submit" value="+">
+        </form>        
+        <form action="estado">
+                <input type="submit" value="Estado">
+        </form>
+{% endblock %}

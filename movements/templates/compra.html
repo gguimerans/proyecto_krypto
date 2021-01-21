@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %} Compra de cryptos {% endblock %}
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+
+        <li><a href="/">Movimientos</a></li>
+        <li><a href="/estado">Estado de la inversión</a></li>
+        <li>Compra de Cryptos</li>
+      </ul> 
+{% endblock %}
+
+{% block h2 %}Compra de Cryptos{% endblock %}
+
 
 {% block bloque_de_formato %}
-        <H1>Compra de Cryptos</H1>
         <form action="compra" method="post">
                 <div class="field">
                         <label for="fromMoneda">From</label>
@@ -36,7 +45,10 @@
                         <input type="submit" value="Aceptar">                        
                 </div>
                 <div class="field">
-                        <input type="submit" value="Cancelar">                        
+                        <input type="reset" value="Cancelar">
+                </div>
+                <div class="field">
+                        <button><a href="/">Volver</a></button>
                 </div>
                 </div>        
         </form>
