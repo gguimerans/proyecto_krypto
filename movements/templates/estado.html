@@ -16,11 +16,16 @@
 {% block bloque_de_formato %}
         <form action="estado" method="get">
                 <div class="field">
-                        <label for="from">Invertido</label>
-                        <input type="text" name="invertido">
+                        <label for="saldoEuros">Saldo Euros</label>
+                        <input type="text" name="saldoEuros" value="{{ saldoEuros }}" disabled>
+
                 </div>
                 <div class="field">
-                        <label for="from">Valor actual</label>
+                        <label for="totalEuros">Invertido</label>
+                        <input type="text" name="totalEuros" value="{{ totalEuros}}" disabled>
+                </div>
+                <div class="field">
+                        <label for="valorActual">Valor actual</label>
                         <input type="number" name="valorActual">
                 </div>                      
                 <div class="field">
