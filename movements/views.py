@@ -1,38 +1,47 @@
 from movements import app
 from flask import render_template, request, url_for, redirect
-import csv
 import sqlite3
 from datetime import date, datetime
 
 DBFILE = "movements/data/bbdd_crypto.db"
 
-def consultaBD(query, params):
+def consultaBD(query, params =()):
     conn = sqlite3.connect(DBFILE)
-    c = conn.cursor()    
+    c = conn.cursor()
 
     c.execute(query, params)
-
     conn.commit()
+
+    filas = c.fetchall()
+    print(filas)
+
     conn.close()
 
-    return c.fetchall()
+
+    if len(filas) == 0:
+        return filas
+
+    columnNames = []
+    for columnName in c.description:
+        columnNames.append(columnName[0])
+
+    listaDeDiccionarios = []
+
+    for fila in filas:
+        d = {}
+        for ix, columnName in enumerate(columnNames):
+            d[columnName] = fila[ix]
+        listaDeDiccionarios.append(d)
+
+    return listaDeDiccionarios
+
 
 @app.route("/")
 def movimientosCrypto():
-    conn = sqlite3.connect(DBFILE)
-    c = conn.cursor()
-    c.execute("SELECT date, time, from_currency, from_quantity, to_currency, to_quantity, from_quantity/to_quantity FROM tabla_movimientos;")
-
-    movimientos = c.fetchall()
-
-    if not movimientos:
-            conn.close()
-            return render_template("sin_movimientos.html") 
-    else:    
-        conn.close()
-        return render_template("movimientos.html", movimientos=movimientos) 
+    movimientos = consultaBD("SELECT date, time, from_currency, from_quantity, to_currency, to_quantity FROM tabla_movimientos;")
     
-# pendiente cálculo de P.U.
+    return render_template("movimientos.html", movimientos=movimientos)     
+   
 @app.route("/compra", methods=["GET", "POST"])
 def compraCrypto():
     monedas = ("EUR", "BTC", "ETH", "XRP", "LTC", "BCH", "BNB", "USDT", "EOS", "BSV", "XLM", "ADA", "TRX")
@@ -163,5 +172,3 @@ def statusCrypto():
 
     conn.close()
     return render_template("estado.html", totalEuros=totalEuros, valorActual=valorActual)
-
-

@@ -12,31 +12,35 @@
 
 {% block h2 %}Movimientos{% endblock %}
 
-{% block bloque_de_formato %}        
-        <table>
-                <tr>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>From</th>
-                        <th>Cantidad</th>
-                        <th>To</th>
-                        <th>Cantidad</th>
-                        <th>P.U</th>
-                </tr>
-        {% for registro in movimientos %}          
-                <tr>
-                        
-                                <td>{{ registro[0] }}</td>
-                                <td>{{ registro[1] }}</td>
-                                <td>{{ registro[2] }}</td>
-                                <td>{{ registro[3] }}</td>
-                                <td>{{ registro[4] }}</td>
-                                <td>{{ registro[5] }}</td>
-                                <td>{{ registro[6] }}</td>
-                        
-                </tr>          
-        {% endfor %}    
-        </table>
+{% block bloque_de_formato %}
+        {% if movimientos|length > 0 %}        
+                <table>
+                        <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>From</th>
+                                <th>Cantidad</th>
+                                <th>To</th>
+                                <th>Cantidad</th>
+                                <th>P.U</th>
+                        </tr>
+                {% for registro in movimientos %}          
+                        <tr>
+                                
+                                        <td>{{ registro["date"] }}</td>
+                                        <td>{{ registro["time"] }}</td>
+                                        <td>{{ registro["from_currency"] }}</td>
+                                        <td>{{ registro["from_quantity"] }}</td>
+                                        <td>{{ registro["to_currency"] }}</td>
+                                        <td>{{ registro["to_quantity"] }}</td>
+                                        <td>{{ registro["from_quantity"]/registro["to_quantity"]}}</td>
+                        </tr>          
+                {% endfor %}    
+                </table>
+        {% else %}
+                <p>No hay movimientos/p>
+        {% endif %}              
+                    
         <form action="compra">
                 <input type="submit" value="+">
         </form>        
