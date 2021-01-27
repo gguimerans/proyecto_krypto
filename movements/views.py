@@ -1,9 +1,10 @@
 from movements import app
+from movements.forms import MovementForm
 from flask import render_template, request, url_for, redirect
 import sqlite3
 from datetime import date, datetime
 
-DBFILE = "movements/data/bbdd_crypto.db"
+DBFILE = app.config["DBFILE"]
 
 def consultaBD(query, params =()):
     conn = sqlite3.connect(DBFILE)
@@ -44,35 +45,30 @@ def movimientosCrypto():
    
 @app.route("/compra", methods=["GET", "POST"])
 def compraCrypto():
-    monedas = ("EUR", "BTC", "ETH", "XRP", "LTC", "BCH", "BNB", "USDT", "EOS", "BSV", "XLM", "ADA", "TRX")
 
+    form = MovementForm()
     if request.method == "POST":
 
         now = datetime.now()
         fecha = now.strftime('%Y-%m-%d')
         hora = now.strftime("%H:%M:%S")
 
-        conn = sqlite3.connect(DBFILE)
-        c = conn.cursor()
-
-        c.execute("INSERT INTO tabla_movimientos (date, time, from_currency, from_quantity, to_currency, to_quantity) VALUES (?,?,?,?,?,?);",
-                (
-                    fecha, 
-                    hora, 
-                    request.form.get("fromMoneda"),
-                    float(request.form.get("cantidadFrom")),
-                    request.form.get("toMoneda"),
-                    float(request.form.get("cantidadTo"))     
-                )
-        )    
+        compra = consultaBD("INSERT INTO tabla_movimientos (date, time, from_currency, from_quantity, to_currency, to_quantity) VALUES (?,?,?,?,?,?);",
+                            (
+                                fecha, 
+                                hora, 
+                                form.from_currency.data,
+                                form.from_quantity.data,
+                                form.to_currency.data,
+                                form.to_quantity.data
+                            )
+                             )    
             
-        conn.commit()
-        conn.close()
 
         return redirect(url_for("movimientosCrypto"))
           
 
-    return render_template("compra.html", monedas=monedas)
+    return render_template("compra.html", form=form)
     
 
 

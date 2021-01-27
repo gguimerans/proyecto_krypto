@@ -1,4 +1,2 @@
-DBHost = "localhost"
-DBport = 4567
-DBuser = "movements_user"
-DBpw = "password"
+SECRET_KEY = "clavemia"
+DBFILE = "movements/data/bbdd_crypto.db"
