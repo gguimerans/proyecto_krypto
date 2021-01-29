@@ -14,13 +14,19 @@
 
 {% block bloque_de_formato %}
         <form action="compra" method="post">
+                {{ form.hidden_tag() }}
                 <div class="field">
                         {{ form.from_currency.label }}
-                        {{ form.from_currency }}
+                        {{ form.from_currency }}                        
                 </div>
                 <div class="field">
                         {{ form.from_quantity.label }}
-                        {{ form.from_quantity }}
+                        {{ form.from_quantity(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.from_quantity.errors else "") }}
+                        {% for error in form.from_quantity.errors %}
+                                <p class="err-msg">
+                                        {{ error }}
+                                </p>
+                        {% endfor %}
                 </div>      
                 <div class="field">
                         {{ form.to_currency.label }}
@@ -28,7 +34,12 @@
                 </div>    
                 <div class="field">
                         {{ form.to_quantity.label }}
-                        {{ form.to_quantity }}
+                        {{ form.to_quantity(placeholder='Introduce un valor(p.e.1234.56)', class="error-data" if form.to_quantity.errors else "") }}
+                        {% for error in form.to_quantity.errors %}
+                                <p class="err-msg">
+                                        {{ error }}
+                                </p>
+                        {% endfor %}
                 </div>  
                 <div class="field">     
                         <label for="precioUnitario">Precio Unitario</label>

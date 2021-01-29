@@ -1,6 +1,6 @@
 from movements import app
 from movements.forms import MovementForm
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect 
 import sqlite3
 from datetime import date, datetime
 
@@ -47,26 +47,26 @@ def movimientosCrypto():
 def compraCrypto():
 
     form = MovementForm()
-    if request.method == "POST":
 
+    if request.method == "POST":
         now = datetime.now()
         fecha = now.strftime('%Y-%m-%d')
         hora = now.strftime("%H:%M:%S")
+        if form.validate():           
+            consultaBD("INSERT INTO tabla_movimientos (date, time, from_currency, from_quantity, to_currency, to_quantity) VALUES (?,?,?,?,?,?);",
+                        (
+                            fecha, 
+                            hora, 
+                            form.from_currency.data,
+                            form.from_quantity.data,
+                            form.to_currency.data,
+                            form.to_quantity.data
+                        )
+                      )                    
 
-        compra = consultaBD("INSERT INTO tabla_movimientos (date, time, from_currency, from_quantity, to_currency, to_quantity) VALUES (?,?,?,?,?,?);",
-                            (
-                                fecha, 
-                                hora, 
-                                form.from_currency.data,
-                                form.from_quantity.data,
-                                form.to_currency.data,
-                                form.to_quantity.data
-                            )
-                             )    
-            
-
-        return redirect(url_for("movimientosCrypto"))
-          
+            return redirect(url_for("movimientosCrypto"))
+        else:
+            return render_template("compra.html", form=form)           
 
     return render_template("compra.html", form=form)
     
@@ -79,14 +79,14 @@ def statusCrypto():
 
 
 #Consulta de saldo de Euros invertidos    
-    c.execute("SELECT M.importe_destino - M2.importe_origen as saldoEuros "
-                "FROM "
-                "(SELECT coalesce(sum(to_quantity), 0) as importe_destino "
-                "FROM tabla_movimientos "
-                "WHERE to_currency = 'EUR') as M, "
-                "(SELECT coalesce(sum(from_quantity), 0) as importe_origen "
-                "FROM tabla_movimientos "
-                "WHERE from_currency = 'EUR') as M2;"
+    c.execute("""SELECT M2.importe_from - M.importe_to as saldoEuros
+                FROM
+                (SELECT coalesce(sum(to_quantity), 0) as importe_to
+                FROM tabla_movimientos
+                WHERE to_currency = 'EUR') as M,
+                (SELECT coalesce(sum(from_quantity), 0) as importe_from
+                FROM tabla_movimientos
+                WHERE from_currency = 'EUR') as M2;"""
             )
 
     consultaSaldo = c.fetchone()
