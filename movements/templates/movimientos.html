@@ -1,50 +1,57 @@
 {% extends "base.html" %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-
+<ul class="uk-breadcrumb">
         <li><a href="/compra">Compra de Cryptos</a></li>
         <li><a href="/estado">Estado de la inversión</a></li>
-        <li>Movimientos</li>
-      </ul> 
-
+        <li class="uk-disabled"><a>Movimientos</a></li>
+        <li><span>Listado de compra y venta de cryptomonedas</span></li>
+        </ul>
 {% endblock %}
 
-{% block h2 %}Movimientos{% endblock %}
+{% block h2 %}<h2 class="title_text uk-text-left">Movimientos</h2>{% endblock %}
 
 {% block bloque_de_formato %}
-        {% if movimientos|length > 0 %}        
-                <table>
-                        <tr>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>From</th>
-                                <th>Cantidad</th>
-                                <th>To</th>
-                                <th>Cantidad</th>
-                                <th>P.U</th>
-                        </tr>
-                {% for registro in movimientos %}          
-                        <tr>
-                                
-                                        <td>{{ registro["date"] }}</td>
-                                        <td>{{ registro["time"] }}</td>
-                                        <td>{{ registro["from_currency"] }}</td>
-                                        <td>{{ registro["from_quantity"] }}</td>
-                                        <td>{{ registro["to_currency"] }}</td>
-                                        <td>{{ registro["to_quantity"] }}</td>
-                                        <td>{{ registro["from_quantity"]/registro["to_quantity"]}}</td>
-                        </tr>          
-                {% endfor %}    
-                </table>
+        {% if movimientos|length > 0 %} 
+                <div class="uk-overflow-auto centrarTabla">                                                    
+                        <table class="uk-table uk-table-divider uk-table-hover uk-table-small uk-table-justify ">
+                                <thead>
+                                        <tr>                                        
+                                                <th class="uk-width-small">Fecha</th>
+                                                <th class="uk-width-small">Hora</th>
+                                                <th class="uk-width-small">From</th>
+                                                <th class="uk-width-small">Cantidad</th>
+                                                <th class="uk-width-small">To</th>
+                                                <th class="uk-width-small">Cantidad</th>
+                                                <th class="uk-width-small">P.U</th>
+                                        </tr>
+                                </thead>                                
+                        {% for registro in movimientos %}          
+                                <tbody>
+                                        <tr>
+                                        
+                                                <td class="uk-width-small">{{ registro["date"] }}</td>
+                                                <td class="uk-width-small">{{ registro["time"] }}</td>
+                                                <td class="uk-width-small">{{ registro["from_currency"] }}</td>
+                                                <td class="uk-width-small">{{ registro["from_quantity"] }}</td>
+                                                <td class="uk-width-small">{{ registro["to_currency"] }}</td>
+                                                <td class="uk-width-small">{{ registro["to_quantity"] }}</td>
+                                                <td class="uk-width-small">{{ registro["from_quantity"]/registro["to_quantity"]}}</td>
+                                </tbody>        
+                                        </tr>          
+                        {% endfor %}   
+                        </table>
+                </div>  
         {% else %}
-                <h2>No hay movimientos</h2>
+                <h2 class="title_text uk-text-left">No hay movimientos</h2>
         {% endif %}              
-                    
-        <form action="compra">
-                <input type="submit" value="+">
-        </form>        
-        <form action="estado">
-                <input type="submit" value="Estado">
-        </form>
+                            
+        <div class="uk-margin border-top">
+                <form class="uk-form-stacked" action="compra">
+                        <button type="submit" class="uk-button uk-button-secondary uk-button-large">+</button>
+                </form>        
+                <form action="estado">
+                        <button type="submit" class="uk-button uk-button-secondary uk-button-large">Estado</button>
+                </form>
+        </div>                             
 {% endblock %}

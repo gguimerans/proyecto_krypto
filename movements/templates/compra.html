@@ -1,59 +1,66 @@
 {% extends "base.html" %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-
+<ul class="uk-breadcrumb">
         <li><a href="/">Movimientos</a></li>
         <li><a href="/estado">Estado de la inversión</a></li>
-        <li>Compra de Cryptos</li>
-      </ul> 
+        <li class="uk-disabled"><a>Compra de Cryptos</a></li>
+        <li><span>Compra y valoración de cryptomonedas</span></li>
+        </ul> 
 {% endblock %}
 
-{% block h2 %}Compra de Cryptos{% endblock %}
+{% block h2 %}<h2 class="title_text uk-text-left">Compra de Cryptos</h2>{% endblock %}
 
 
 {% block bloque_de_formato %}
         <form action="compra" method="post">
                 {{ form.hidden_tag() }}
-                <div class="field">
-                        {{ form.from_currency.label }}
-                        {{ form.from_currency }}                        
-                </div>
-                <div class="field">
-                        {{ form.from_quantity.label }}
-                        {{ form.from_quantity(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.from_quantity.errors else "") }}
-                        {% for error in form.from_quantity.errors %}
-                                <p class="err-msg">
-                                        {{ error }}
-                                </p>
-                        {% endfor %}
-                </div>      
-                <div class="field">
-                        {{ form.to_currency.label }}
-                        {{ form.to_currency }}
-                </div>    
-                <div class="field">
-                        {{ form.to_quantity.label }}
-                        {{ form.to_quantity(placeholder='Introduce un valor(p.e.1234.56)', class="error-data" if form.to_quantity.errors else "") }}
-                        {% for error in form.to_quantity.errors %}
-                                <p class="err-msg">
-                                        {{ error }}
-                                </p>
-                        {% endfor %}
-                </div>  
-                <div class="field">     
-                        <label for="precioUnitario">Precio Unitario</label>
-                        <input type="number" name="precioUnitario">
-                <div class="field">
-                        {{ form.submit }}                      
-                </div>
-                <div class="field">
-                        <input type="reset" value="Cancelar">
-                </div>
-                <div class="field">
-                        <button><a href="/">Volver</a></button>
-                </div>
-                </div>        
+                <fieldset class="uk-fieldset">
+                        <div class="uk-margin">
+                                <div>                                
+                                        {{ form.from_currency.label }} 
+                                        {{ form.from_currency }}                        
+                                </div>
+                                <div>
+                                        {{ form.to_currency.label }}
+                                        {{ form.to_currency }}
+                                </div>
+                        </div>
+                              
+                        <div class="uk-margin">
+                                <div>
+                                        {{ form.from_quantity.label }}
+                                        {{ form.from_quantity(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.from_quantity.errors else "") }}
+                                        <button type="submit" class="uk-button uk-button-small" uk-icon="search">a</button>
+                                        <span class="uk-margin-small-right uk-icon" uk-icon="check"></span>
+                                        {% for error in form.from_quantity.errors %}
+                                                <span class="err-msg">
+                                                        {{ error }}
+                                                </span>
+                                        {% endfor %}
+                                </div>
+                                <div>
+                                        {{ form.to_quantity.label }}
+                                        {{ form.to_quantity(placeholder='Introduce un valor(p.e.1234.56)', class="error-data" if form.to_quantity.errors else "") }}
+                                        {% for error in form.to_quantity.errors %}
+                                                <span class="err-msg">
+                                                        {{ error }}
+                                                </span>
+                                        {% endfor %}
+                                </div>  
+                        </div>    
+                        <div class="uk-margin align-right">
+                                <div>
+                                        <label for="precioUnitario">Precio Unitario</label>
+                                        <input type="number" name="precioUnitario"/>
+                                </div>
+                        </div>
+                        <div class="uk-margin border-top">
+                                <button type="submit" class="uk-button uk-button-secondary uk-button-small">Aceptar</button>                
+                                <button type="reset" class="uk-button uk-button-secondary uk-button-small">Resetear formulario</button>                    
+                                <a class="uk-button uk-button-secondary uk-button-small" href="/">Volver</a>        
+                        </div>
+                </fieldset>
         </form>
 
 {% endblock %}

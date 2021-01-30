@@ -1,0 +1,73 @@
+.centrarTabla {
+    margin: 0 10% 0 10%;
+}
+
+header.dark {
+    padding: 0;
+    background-color:black;
+}
+
+footer.dark  {
+    background-color:black;
+    color:aliceblue;    
+}
+
+footer span {
+    margin-left: 5%;
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.uk-breadcrumb > * > * {
+    color:aliceblue;
+}
+
+.container h2{
+    border-bottom: black 1px solid;
+}
+
+div.uk-margin {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.border-top {
+    border-top: black 1px solid;
+    padding-top: 1em;
+}
+
+div.uk-margin button{
+    width: auto;
+    float: left;
+    margin-right: 1em;
+}
+
+fieldset > * {
+    width: auto;
+}
+
+fieldset select, input{
+    margin: 0 !important;
+}
+
+fieldset div.uk-margin div {
+    width: 50%;
+    padding: 0 10%;
+}
+
+.err-msg{
+    color:red;
+    font-size: 0.8rem;
+}
+
+.error-data{
+    border-color: red;
+}
+
+.align-right{
+    justify-content: right !important;
+}

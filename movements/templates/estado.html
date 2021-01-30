@@ -1,32 +1,36 @@
 {% extends "base.html" %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-
+<ul class="uk-breadcrumb">
         <li><a href="/">Movimientos</a></li>
         <li><a href="/compra">Compra de cryptos</a></li>
-        <li>Estado de la inversión</li>
+        <li class="uk-disabled"><a>Estado de la inversión</a></li>
       </ul> 
-
 {% endblock %}
 
-{% block h2 %}Estado de la inversion{% endblock %}
+{% block h2 %}<h2 class="title_text uk-text-left">Estado de la inversión</h2>{% endblock %}
 
 
 {% block bloque_de_formato %}
-        <form action="estado" method="get">                
-                <div class="field">
-                        <label for="totalEuros">Invertido</label>
-                        <input type="text" name="totalEuros" value="{{ totalEuros }}" disabled>
-                </div>
-                <div class="field">
-                        <label for="valorActual">Valor actual</label>
-                        <input type="text" name="valorActual"value="{{ valorActual }}"disabled>
-                </div>                      
-                <div class="field">
-                        <button><a href="/">Volver</a></button>
-                </div>              
-                </div>        
+        <form action="estado" method="get">    
+                <fieldset class="uk-fieldset"></fieldset>            
+                        <div class="uk-margin">
+                                <div>
+                                        <label for="totalEuros">Invertido</label>
+                                        <input type="text" name="totalEuros" value="{{ totalEuros }}" disabled>
+                                </div>
+                        </div>
+                        <div class="uk-margin">
+                                <div>
+                                <label for="valorActual">Valor actual</label>
+                                <input type="text" name="valorActual"value="{{ valorActual }}"disabled>
+                                </div>
+                        </div>                      
+                        <div class="uk-margin border-top">                                                  
+                                <a class="uk-button uk-button-secondary uk-button-small" href="/">Volver</a>        
+                        </div>           
+                        </div>
+                <fieldset>            
         </form>
 
 {% endblock %}

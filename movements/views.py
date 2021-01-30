@@ -14,7 +14,6 @@ def consultaBD(query, params =()):
     conn.commit()
 
     filas = c.fetchall()
-    print(filas)
 
     conn.close()
 
@@ -37,7 +36,7 @@ def consultaBD(query, params =()):
     return listaDeDiccionarios
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def movimientosCrypto():
     movimientos = consultaBD("SELECT date, time, from_currency, from_quantity, to_currency, to_quantity FROM tabla_movimientos;")
     
@@ -72,7 +71,7 @@ def compraCrypto():
     
 
 
-@app.route("/estado", methods=["GET"])
+@app.route("/estado", methods=["GET", "POST"])
 def statusCrypto():
     conn = sqlite3.connect(DBFILE)
     c = conn.cursor()

@@ -1,30 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>myCrypto- {% block title %}{% endblock %}</title>
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/static/css/font-awesome.css">
-        <link rel="stylesheet" href="/static/css/pico.css">
-        <link rel="stylesheet" href="/static/css/styles.css"> 
+        <link rel="stylesheet" href="/static/uikit.min.css" />
+        <link rel="stylesheet" href="/static/pico.css"> 
+        <link rel="stylesheet" href="/static/styles.css">
+        <script src="https://use.fontawesome.com/0001febe64.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.15/dist/js/uikit-icons.min.js"></script>        
     </head>
     <body>
-        <header>
-            <h1>Conversor Crypto</h1>
-            <section>
-                {% block breadcrumbs %}{% endblock %}
-            </section> 
-            <h2>{% block h2 %}{% endblock %}</h2>
+        
+        <header data-theme="dark" class="dark">
+            <div class="uk-card-header ">
+                <h1>Conversor Crypto</h1>
+                {% block breadcrumbs %}{% endblock %}                    
+            </div>        
         </header>
+        <main>
+            <div class="container"> 
+                {% block h2 %}{% endblock %}  
+                {% block bloque_de_formato %}{% endblock %}
+            </div>  
+        </main>
 
-        <section>
-            {% block bloque_de_formato %}{% endblock %}
-        </section>  
-
-        <footer>
-            &copy; 2021. Todos los derechos // Gonzalo Guimerans
+        <footer data-theme="dark" class="dark">
+            <span>&copy; 2021. Todos los derechos // Gonzalo Guimerans</span>
         </footer>      
     </body>    
 </html>
