@@ -71,3 +71,11 @@ fieldset div.uk-margin div {
 .align-right{
     justify-content: right !important;
 }
+
+.ButtonCalculadora{
+    background: url("/static/images/calculator.png") no-repeat;
+    background-size:contain;
+    background-position:center;
+    border: black;
+}
+

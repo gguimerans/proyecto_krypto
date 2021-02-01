@@ -1,128 +1,31 @@
 from movements import app
 from movements.forms import MovementForm
 from flask import render_template, request, url_for, redirect 
-import sqlite3
 from datetime import date, datetime
+from requests import Request, Session
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+from tools.dbaccess import queriesDB
+import json
 
 DBFILE = app.config["DBFILE"]
+queries = queriesDB(DBFILE)
 
-def consultaBD(query, params =()):
-    conn = sqlite3.connect(DBFILE)
-    c = conn.cursor()
-
-    c.execute(query, params)
-    conn.commit()
-
-    filas = c.fetchall()
-
-    conn.close()
-
-
-    if len(filas) == 0:
-        return filas
-
-    columnNames = []
-    for columnName in c.description:
-        columnNames.append(columnName[0])
-
-    listaDeDiccionarios = []
-
-    for fila in filas:
-        d = {}
-        for ix, columnName in enumerate(columnNames):
-            d[columnName] = fila[ix]
-        listaDeDiccionarios.append(d)
-
-    return listaDeDiccionarios
+url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+parameters = {
+  'start':'1',
+  'limit':'5000',
+  'convert':'EUR'
+}
+headers = {
+  'Accepts': 'application/json',
+  'X-CMC_PRO_API_KEY': '0cd0ce38-f56c-452d-a8ff-ed337f9869a0',
+}
 
 
-@app.route("/", methods=["GET", "POST"])
-def movimientosCrypto():
-    movimientos = consultaBD("SELECT date, time, from_currency, from_quantity, to_currency, to_quantity FROM tabla_movimientos;")
-    
-    return render_template("movimientos.html", movimientos=movimientos)     
-   
-@app.route("/compra", methods=["GET", "POST"])
-def compraCrypto():
+def getListaCryptos():
+    consultaToAll = queries.getconsultaToAll()
 
-    form = MovementForm()
-
-    if request.method == "POST":
-        now = datetime.now()
-        fecha = now.strftime('%Y-%m-%d')
-        hora = now.strftime("%H:%M:%S")
-        if form.validate():           
-            consultaBD("INSERT INTO tabla_movimientos (date, time, from_currency, from_quantity, to_currency, to_quantity) VALUES (?,?,?,?,?,?);",
-                        (
-                            fecha, 
-                            hora, 
-                            form.from_currency.data,
-                            form.from_quantity.data,
-                            form.to_currency.data,
-                            form.to_quantity.data
-                        )
-                      )                    
-
-            return redirect(url_for("movimientosCrypto"))
-        else:
-            return render_template("compra.html", form=form)           
-
-    return render_template("compra.html", form=form)
-    
-
-
-@app.route("/estado", methods=["GET", "POST"])
-def statusCrypto():
-    conn = sqlite3.connect(DBFILE)
-    c = conn.cursor()
-
-
-#Consulta de saldo de Euros invertidos    
-    c.execute("""SELECT M2.importe_from - M.importe_to as saldoEuros
-                FROM
-                (SELECT coalesce(sum(to_quantity), 0) as importe_to
-                FROM tabla_movimientos
-                WHERE to_currency = 'EUR') as M,
-                (SELECT coalesce(sum(from_quantity), 0) as importe_from
-                FROM tabla_movimientos
-                WHERE from_currency = 'EUR') as M2;"""
-            )
-
-    consultaSaldo = c.fetchone()
-
-    saldoEuros = 0
-
-    if consultaSaldo:
-        saldoEuros = consultaSaldo[0]
-
-#Consulta de total de Euros invertidos
-    c.execute("""SELECT coalesce(sum(from_quantity), 0)
-                FROM tabla_movimientos 
-                WHERE from_currency = 'EUR';"""
-            )    
-    consultaTotal = c.fetchone()
-
-    totalEuros = 0
-
-    if consultaTotal:
-        totalEuros = consultaTotal[0]
-
-
-
-#Consulta listado de cryptomonedas y sus valores
-    c.execute("""SELECT coalesce(sum(to_quantity), 0) as importe_destino, to_currency
-                FROM tabla_movimientos
-                WHERE to_currency != 'EUR'
-                GROUP BY to_currency;"""
-            )
-    consultaToAll = c.fetchall()
-
-    c.execute("""SELECT coalesce(sum(from_quantity), 0) as importe_origen, from_currency
-                FROM tabla_movimientos
-                WHERE from_currency != 'EUR'
-                GROUP BY from_currency;"""
-            )
-    consultaFromAll = c.fetchall()
+    consultaFromAll = queries.getconsultaFromAll()
 
     listaCrypto = []
 
@@ -139,31 +42,77 @@ def statusCrypto():
             
                 listaCrypto.append((saldoCrypto, monedaTo))
 
-    if consultaFromAll:
-        if consultaToAll:
-            for registroFrom in consultaFromAll:
-                saldoCrypto = registroFrom[0]*(-1)
-                monedaFrom = registroFrom[1]
-                encontrado = False
-                for registroTo in consultaToAll:
-                    monedaTo = registroTo[1]
-                    if monedaTo == monedaFrom:
-                        encontrado=True
-                        break 
-                if encontrado == False:
-                    listaCrypto.append((saldoCrypto, monedaFrom))
+    return listaCrypto
+
+def cargaMonedasDisponibles(select):
+    listaCrypto = getListaCryptos()
     
+    monedasDisponibles = ["EUR"]
+    if not listaCrypto:
+        for registro in listaCrypto:
+            if registro[0] > 0:
+                monedasDisponibles += [registro[1]]
     
-    #Consulta saldo Cryptomonedas: pendiente conexión con API para hacer conversión real (saldoCryptoenEuros)
+    select.choices = monedasDisponibles
+
+
+
+
+@app.route("/", methods=["GET", "POST"])
+def movimientosCrypto():
+    movimientos = queries.getMovimientosCrypto()
+    return render_template("movimientos.html", movimientos=movimientos)
+
+@app.route("/compra", methods=["GET", "POST"])
+def compraCrypto():
+
+    form = MovementForm()
+    cargaMonedasDisponibles(form.from_currency)
+
+    if request.method == "POST":
+        now = datetime.now()
+        fecha = now.strftime('%Y-%m-%d')
+        hora = now.strftime("%H:%M:%S")
+        if form.validate():           
+            queries.insertaCompra((fecha, hora, form.from_currency.data, form.from_quantity.data, form.to_currency.data, form.to_quantity.data))
+            return redirect(url_for("movimientosCrypto"))
+        else:
+            return render_template("compra.html", form=form)           
+
+    return render_template("compra.html", form=form)
+    
+
+
+@app.route("/estado", methods=["GET", "POST"])
+def statusCrypto():
+    
+    #Consulta de saldo de Euros     
+    consultaSaldo = queries.getSaldoEuros()
+
+    saldoEuros = 0
+
+    if consultaSaldo:
+        saldoEuros = consultaSaldo[0]
+
+    #Consulta de total de Euros invertidos
+    consultaTotal = queries.getEurosInvertidos()
+
+    totalEuros = 0
+
+    if consultaTotal:
+        totalEuros = consultaTotal[0]
+
+    #Consulta listado de cryptomonedas y sus valores
+    listaCrypto = getListaCryptos()
+
+    #Consulta saldo Cryptomonedas: pendiente conexión con API para hacer conversión real (saldoCryptoenEuros)   
     saldoCrypto = 0
     for registroCrypto in listaCrypto:    
         saldoCrypto += registroCrypto[0]
 
-    saldoCryptoenEuros = saldoCrypto*2
+    saldoCryptoenEuros = saldoCrypto
 
     #Valor actual: cálculo de Total de euros invertidos + Saldo de euros invertidos (ganancia/perdida) + Valor de euros de nuestras cryptos (inversión atrapada)
-
     valorActual = totalEuros + saldoEuros + saldoCryptoenEuros
 
-    conn.close()
     return render_template("estado.html", totalEuros=totalEuros, valorActual=valorActual)

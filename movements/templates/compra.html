@@ -31,8 +31,9 @@
                                 <div>
                                         {{ form.from_quantity.label }}
                                         {{ form.from_quantity(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.from_quantity.errors else "") }}
-                                        <button type="submit" class="uk-button uk-button-small" uk-icon="search">a</button>
-                                        <span class="uk-margin-small-right uk-icon" uk-icon="check"></span>
+                                        <div class="uk-margin">    
+                                                <button type="calc" class="ButtonCalculadora"></button>
+                                        </div>
                                         {% for error in form.from_quantity.errors %}
                                                 <span class="err-msg">
                                                         {{ error }}
@@ -58,7 +59,7 @@
                         <div class="uk-margin border-top">
                                 <button type="submit" class="uk-button uk-button-secondary uk-button-small">Aceptar</button>                
                                 <button type="reset" class="uk-button uk-button-secondary uk-button-small">Resetear formulario</button>                    
-                                <a class="uk-button uk-button-secondary uk-button-small" href="/">Volver</a>        
+                                <a class="uk-button uk-button-secondary uk-button-small" href="/">Volver</a> 
                         </div>
                 </fieldset>
         </form>
