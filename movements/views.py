@@ -10,37 +10,23 @@ import json
 DBFILE = app.config["DBFILE"]
 queries = queriesDB(DBFILE)
 
-url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-parameters = {
-  'start':'1',
-  'limit':'5000',
-  'convert':'EUR'
-}
-headers = {
-  'Accepts': 'application/json',
-  'X-CMC_PRO_API_KEY': '0cd0ce38-f56c-452d-a8ff-ed337f9869a0',
-}
-
 
 def getListaCryptos():
     consultaToAll = queries.getconsultaToAll()
 
     consultaFromAll = queries.getconsultaFromAll()
 
-    listaCrypto = []
+    listaCrypto = consultaToAll
 
     if consultaToAll:
         if consultaFromAll:
             for registroTo in consultaToAll:
-                saldoCrypto = registroTo[0]
-                monedaTo = registroTo[1]
+                monedaTo = registroTo["to_currency"]
                 for registroFrom in consultaFromAll:
-                    monedaFrom = registroFrom[1]
+                    monedaFrom = registroFrom["from_currency"]
                     if monedaTo == monedaFrom:
-                        saldoCrypto = registroTo[0] - registroFrom[0]
+                        registroTo["importe_destino"] -= registroFrom["importe_origen"]
                         break
-            
-                listaCrypto.append((saldoCrypto, monedaTo))
 
     return listaCrypto
 
@@ -48,14 +34,12 @@ def cargaMonedasDisponibles(select):
     listaCrypto = getListaCryptos()
     
     monedasDisponibles = ["EUR"]
-    if not listaCrypto:
+    if listaCrypto:
         for registro in listaCrypto:
-            if registro[0] > 0:
-                monedasDisponibles += [registro[1]]
+            if registro["importe_destino"] > 0:
+                monedasDisponibles += [registro["to_currency"]]
     
     select.choices = monedasDisponibles
-
-
 
 
 @app.route("/", methods=["GET", "POST"])
