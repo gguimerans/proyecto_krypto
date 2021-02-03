@@ -7,7 +7,7 @@ class manejarDB:
         self.conn = None
         self.cursor = None
 
-    def consultaBD(self, query, params =()):
+    def consultaBD(self, query, params=()):
         conn = sqlite3.connect(self.path)
         c = conn.cursor()
 
@@ -36,7 +36,7 @@ class manejarDB:
 
         return listaDeDiccionarios
 
-    def consultaBDFetchOne(self, query, params =()):
+    def consultaBDFetchOne(self, query, params=()):
         conn = sqlite3.connect(self.path)
         c = conn.cursor()
 
@@ -88,6 +88,6 @@ class queriesDB:
                 GROUP BY from_currency;"""
             )
             
-    def insertaCompra(self, params)        :
+    def insertaCompra(self, params):
         return self.db.consultaBD("INSERT INTO tabla_movimientos (date, time, from_currency, from_quantity, to_currency, to_quantity) VALUES (?,?,?,?,?,?);", params)
 

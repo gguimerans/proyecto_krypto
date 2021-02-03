@@ -6,9 +6,14 @@ from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from tools.dbaccess import queriesDB
 import json
+from tools.apicomm import CryptoAPI
 
 DBFILE = app.config["DBFILE"]
 queries = queriesDB(DBFILE)
+
+API_URL = app.config["API_URL"]
+API_KEY = app.config["API_KEY"]
+manejaAPI = CryptoAPI(API_URL, API_KEY)
 
 
 def getListaCryptos():
@@ -41,6 +46,13 @@ def cargaMonedasDisponibles(select):
     
     select.choices = monedasDisponibles
 
+    return listaCrypto
+
+
+def getPrecioUnitarioCrypto(form, params):
+    data = manejaAPI.consultaApi(params)
+    return data["data"]["quote"][params[2]]["price"]
+
 
 @app.route("/", methods=["GET", "POST"])
 def movimientosCrypto():
@@ -50,20 +62,41 @@ def movimientosCrypto():
 @app.route("/compra", methods=["GET", "POST"])
 def compraCrypto():
 
-    form = MovementForm()
-    cargaMonedasDisponibles(form.from_currency)
+    try:
+        form = MovementForm()
+        listaCrypto = cargaMonedasDisponibles(form.from_currency)
 
-    if request.method == "POST":
-        now = datetime.now()
-        fecha = now.strftime('%Y-%m-%d')
-        hora = now.strftime("%H:%M:%S")
-        if form.validate():           
-            queries.insertaCompra((fecha, hora, form.from_currency.data, form.from_quantity.data, form.to_currency.data, form.to_quantity.data))
-            return redirect(url_for("movimientosCrypto"))
-        else:
-            return render_template("compra.html", form=form)           
-
-    return render_template("compra.html", form=form)
+        if request.method == "POST":
+            now = datetime.now()
+            fecha = now.strftime('%Y-%m-%d')
+            hora = now.strftime("%H:%M:%S")
+            monedaActual = "EUR"
+            if form.validate():
+                if form.calc.data:
+                    #validamos que tenemos importe suficiente para convertir en la moneda seleccionada (EUR ilimitados)
+                    monedaActual = form.from_currency.data
+                    if (monedaActual != 'EUR'):
+                        saldoMonedaActual = float(request.form[monedaActual])
+                        if form.from_quantity.data > saldoMonedaActual:
+                            form.from_quantity.errors.append("no hay saldo suficiente de la moneda seleccionada: %d%s" %(saldoMonedaActual, monedaActual))
+                            raise Exception
+                    
+                    #Consultamos el precio unitario de la crypto llamando a la API
+                    precioUnitario = getPrecioUnitarioCrypto(form, (1, monedaActual, form.to_currency.data))
+                    form.precio_unitario.data = precioUnitario
+                    if precioUnitario > 0:
+                        #Calculamos el importe en la nueva moneda
+                        form.to_quantity.data = form.from_quantity.data * precioUnitario
+                        
+                if form.submit.data:
+                    queries.insertaCompra((fecha, hora, form.from_currency.data, form.from_quantity.data, form.to_currency.data, form.to_quantity.data))
+                    return redirect(url_for("movimientosCrypto"))
+            else:
+                return render_template("compra.html", form=form)
+    except Exception as e:
+        print(e)
+    finally:
+        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
     
 
 
@@ -92,7 +125,7 @@ def statusCrypto():
     #Consulta saldo Cryptomonedas: pendiente conexión con API para hacer conversión real (saldoCryptoenEuros)   
     saldoCrypto = 0
     for registroCrypto in listaCrypto:    
-        saldoCrypto += registroCrypto[0]
+        saldoCrypto += registroCrypto["importe_destino"]
 
     saldoCryptoenEuros = saldoCrypto
 

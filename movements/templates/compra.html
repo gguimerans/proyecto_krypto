@@ -19,21 +19,31 @@
                         <div class="uk-margin">
                                 <div>                                
                                         {{ form.from_currency.label }} 
-                                        {{ form.from_currency }}                        
+                                        {{ form.from_currency }}
+
+                                        {% if cryptosDisponibles|length > 0 %} 
+                                                {% for crypto in cryptosDisponibles %}          
+                                                        <input type="hidden" id="{{ crypto['to_currency'] }}" name="{{ crypto['to_currency'] }}" value="{{ crypto['importe_destino']}}" />
+                                                {% endfor %}
+                                        {% endif %}
                                 </div>
                                 <div>
                                         {{ form.to_currency.label }}
-                                        {{ form.to_currency }}
+                                        {{ form.to_currency(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.to_currency.errors else "") }}
+                                        {% for error in form.to_currency.errors %}
+                                                <span class="err-msg">
+                                                        {{ error }}
+                                                </span>
+                                        {% endfor %}
                                 </div>
                         </div>
-                              
+
                         <div class="uk-margin">
-                                <div>
+                                <div class="calc">
                                         {{ form.from_quantity.label }}
                                         {{ form.from_quantity(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.from_quantity.errors else "") }}
-                                        <div class="uk-margin">    
-                                                <button type="calc" class="ButtonCalculadora"></button>
-                                        </div>
+                                        {{ form.calc(class="ButtonCalculadora") }}
+                                        
                                         {% for error in form.from_quantity.errors %}
                                                 <span class="err-msg">
                                                         {{ error }}
@@ -42,22 +52,17 @@
                                 </div>
                                 <div>
                                         {{ form.to_quantity.label }}
-                                        {{ form.to_quantity(placeholder='Introduce un valor(p.e.1234.56)', class="error-data" if form.to_quantity.errors else "") }}
-                                        {% for error in form.to_quantity.errors %}
-                                                <span class="err-msg">
-                                                        {{ error }}
-                                                </span>
-                                        {% endfor %}
+                                        {{ form.to_quantity(placeholder='Este campo se calculará automáticamente', class="uk-disabled") }}
                                 </div>  
                         </div>    
                         <div class="uk-margin align-right">
                                 <div>
-                                        <label for="precioUnitario">Precio Unitario</label>
-                                        <input type="number" name="precioUnitario"/>
+                                        {{ form.precio_unitario.label }}
+                                        {{ form.precio_unitario(placeholder='Este campo se calculará automáticamente', class="uk-disabled") }}
                                 </div>
                         </div>
                         <div class="uk-margin border-top">
-                                <button type="submit" class="uk-button uk-button-secondary uk-button-small">Aceptar</button>                
+                                {{ form.submit(class="k-button uk-button-secondary uk-button-small") }}
                                 <button type="reset" class="uk-button uk-button-secondary uk-button-small">Resetear formulario</button>                    
                                 <a class="uk-button uk-button-secondary uk-button-small" href="/">Volver</a> 
                         </div>
