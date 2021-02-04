@@ -71,15 +71,18 @@ def compraCrypto():
             fecha = now.strftime('%Y-%m-%d')
             hora = now.strftime("%H:%M:%S")
             monedaActual = "EUR"
+            
             if form.validate():
-                #if request.form['calc'] == 'Calcular':
+
                 if form.calc.data:
+                    #Reseteamos los hidden con la información a guardar
+                    form.from_currency_hidden.data = form.to_currency_hidden.data = form.from_quantity_hidden.data = ""
                     #validamos que tenemos importe suficiente para convertir en la moneda seleccionada (EUR ilimitados)
                     monedaActual = form.from_currency.data
                     if (monedaActual != 'EUR'):
                         saldoMonedaActual = float(request.form[monedaActual])
                         if form.from_quantity.data > saldoMonedaActual:
-                            form.from_quantity.errors.append("no hay saldo suficiente de la moneda seleccionada: %d%s" %(saldoMonedaActual, monedaActual))
+                            form.from_quantity.errors.append("no hay saldo suficiente de la moneda seleccionada: %d%s" %(saldoMonedaActual, monedaActual))                            
                             raise Exception
                     
                     #Consultamos el precio unitario de la crypto llamando a la API
@@ -88,18 +91,27 @@ def compraCrypto():
                     if precioUnitario > 0:
                         #Calculamos el importe en la nueva moneda
                         form.to_quantity.data = form.from_quantity.data * precioUnitario
-                        
-                #elif request.form['submit'] == 'Aceptar':
+                        #Asignamos los valores a los hidden
+                        form.from_currency_hidden.data = form.from_currency.data
+                        form.to_currency_hidden.data = form.to_currency.data
+                        form.from_quantity_hidden.data = form.from_quantity.data
+                        #Bloqueamos los campos editables para evitar incongruencia de datos al guardar los registros
+                        form.from_currency.render_kw = {"class":"uk-disabled"}
+                        form.to_currency.render_kw = {"class":"uk-disabled"}
+                        form.from_quantity.render_kw = {"readonly":"readonly"}
+
                 elif form.submit.data:
-                    queries.insertaCompra((fecha, hora, form.from_currency.data, form.from_quantity.data, form.to_currency.data, form.to_quantity.data))
+                    queries.insertaCompra((fecha, hora, form.from_currency_hidden.data, form.from_quantity_hidden.data, form.to_currency_hidden.data, form.to_quantity.data))
                     return redirect(url_for("movimientosCrypto"))
-            else:
-                return render_template("compra.html", form=form)
                 
-        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
+            return render_template("compra.html", form=form,  cryptosDisponibles=listaCrypto)
+
+        else:
+            return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
         
     except Exception as e:
-        print("Error en el submit del formulario: {}", format(type(e).__name__, e))    
+        print("Error en el submit del formulario: {}", format(type(e).__name__, e))
+        #return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
 
 
 @app.route("/estado", methods=["GET", "POST"])

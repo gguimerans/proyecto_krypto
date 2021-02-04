@@ -42,7 +42,7 @@
                                 <div class="calc">
                                         {{ form.from_quantity.label }}
                                         {{ form.from_quantity(placeholder='Introduce un valor(p.e. 1234.56)', class="error-data" if form.from_quantity.errors else "") }}
-                                        {{ form.calc(class="ButtonCalculadora") }}
+                                        {{ form.calc(class="button buttonCalculadora") }}
                                         
                                         {% for error in form.from_quantity.errors %}
                                                 <span class="err-msg">
@@ -52,19 +52,19 @@
                                 </div>
                                 <div>
                                         {{ form.to_quantity.label }}
-                                        {{ form.to_quantity(placeholder='Este campo se calculará automáticamente', class="uk-disabled") }}
+                                        {{ form.to_quantity(placeholder='Este campo se calculará automáticamente', readonly="readonly") }}
                                 </div>  
-                        </div>    
+                        </div> 
                         <div class="uk-margin align-right">
                                 <div>
                                         {{ form.precio_unitario.label }}
-                                        {{ form.precio_unitario(placeholder='Este campo se calculará automáticamente', class="uk-disabled") }}
+                                        {{ form.precio_unitario(placeholder='Este campo se calculará automáticamente', readonly="readonly") }}
                                 </div>
                         </div>
                         <div class="uk-margin border-top">
-                                {{ form.submit(class="k-button uk-button-secondary uk-button-small") }}
-                                <button type="reset" class="uk-button uk-button-secondary uk-button-small">Resetear formulario</button>                    
-                                <a class="uk-button uk-button-secondary uk-button-small" href="/">Volver</a> 
+                                {{ form.submit(class="button uk-button uk-button-secondary uk-button-small") }}
+                                <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="compra" />Resetear Formulario</a>
+                                <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="/" />Volver</a>
                         </div>
                 </fieldset>
         </form>

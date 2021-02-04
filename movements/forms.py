@@ -16,13 +16,17 @@ def notEquals(nameFieldToCompare, message=None):
 class MovementForm(FlaskForm):
     
     from_currency = SelectField(u'Moneda origen')
+    from_currency_hidden = HiddenField()
     from_quantity = FloatField('Cantidad origen', validators=[DataRequired(message="El valor debe ser un número (p.e.1234.56)")])
+    from_quantity_hidden = HiddenField()
     to_currency = SelectField(u'Moneda destino', 
                                 choices=[("EUR"),("BTC"), ("ETH"), ("XRP"), ("LTC"), ("BCH"), ("BNB"), ("USDT"), ("EOS"), ("BSV"), ("XLM"), ("ADA"), ("TRX")],
                                 validators=[notEquals(nameFieldToCompare="from_currency", message="Las monedas no pueden coincidir")])
+    to_currency_hidden = HiddenField()                                
     to_quantity = StringField('Cantidad destino')
     precio_unitario = StringField('Precio unitario crypto')
 
+    calc = SubmitField(" ")
     submit = SubmitField("Aceptar")
-    calc = SubmitField("Calcular")
+
 
