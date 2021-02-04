@@ -49,7 +49,7 @@ def cargaMonedasDisponibles(select):
     return listaCrypto
 
 
-def getPrecioUnitarioCrypto(form, params):
+def getPrecioUnitarioCrypto(params):
     data = manejaAPI.consultaApi(params)
     return data["data"]["quote"][params[2]]["price"]
 
@@ -72,6 +72,7 @@ def compraCrypto():
             hora = now.strftime("%H:%M:%S")
             monedaActual = "EUR"
             if form.validate():
+                #if request.form['calc'] == 'Calcular':
                 if form.calc.data:
                     #validamos que tenemos importe suficiente para convertir en la moneda seleccionada (EUR ilimitados)
                     monedaActual = form.from_currency.data
@@ -82,22 +83,23 @@ def compraCrypto():
                             raise Exception
                     
                     #Consultamos el precio unitario de la crypto llamando a la API
-                    precioUnitario = getPrecioUnitarioCrypto(form, (1, monedaActual, form.to_currency.data))
+                    precioUnitario = getPrecioUnitarioCrypto((1, monedaActual, form.to_currency.data))
                     form.precio_unitario.data = precioUnitario
                     if precioUnitario > 0:
                         #Calculamos el importe en la nueva moneda
                         form.to_quantity.data = form.from_quantity.data * precioUnitario
                         
-                if form.submit.data:
+                #elif request.form['submit'] == 'Aceptar':
+                elif form.submit.data:
                     queries.insertaCompra((fecha, hora, form.from_currency.data, form.from_quantity.data, form.to_currency.data, form.to_quantity.data))
                     return redirect(url_for("movimientosCrypto"))
             else:
                 return render_template("compra.html", form=form)
-    except Exception as e:
-        print(e)
-    finally:
+                
         return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
-    
+        
+    except Exception as e:
+        print("Error en el submit del formulario: {}", format(type(e).__name__, e))    
 
 
 @app.route("/estado", methods=["GET", "POST"])
@@ -123,11 +125,12 @@ def statusCrypto():
     listaCrypto = getListaCryptos()
 
     #Consulta saldo Cryptomonedas: pendiente conexión con API para hacer conversión real (saldoCryptoenEuros)   
-    saldoCrypto = 0
-    for registroCrypto in listaCrypto:    
-        saldoCrypto += registroCrypto["importe_destino"]
+    saldoCryptoenEuros = 0
+    if listaCrypto:
+        for registroCrypto in listaCrypto:
+            if registroCrypto["importe_destino"] > 0:
+                saldoCryptoenEuros += getPrecioUnitarioCrypto((registroCrypto["importe_destino"], registroCrypto["to_currency"], "EUR"))
 
-    saldoCryptoenEuros = saldoCrypto
 
     #Valor actual: cálculo de Total de euros invertidos + Saldo de euros invertidos (ganancia/perdida) + Valor de euros de nuestras cryptos (inversión atrapada)
     valorActual = totalEuros + saldoEuros + saldoCryptoenEuros
