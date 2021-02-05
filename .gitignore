@@ -3,7 +3,6 @@ __pycache__/
 movements/__pycache__/
 .env
 .vscode/
-movements/data/
 config.py
 movements/data/bbdd_crypto.db
 movements/data/bbdd_crypto.sqbpro

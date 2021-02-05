@@ -67,16 +67,26 @@ def compraCrypto():
         listaCrypto = cargaMonedasDisponibles(form.from_currency)
 
         if request.method == "POST":
-            now = datetime.now()
-            fecha = now.strftime('%Y-%m-%d')
-            hora = now.strftime("%H:%M:%S")
-            monedaActual = "EUR"
+
+            #Si se pulsa Aceptar se esta confirmando la compra, por lo que no hace falta pasar la validación del formulario
+            if form.submit.data:
+                now = datetime.now()
+                fecha = now.strftime('%Y-%m-%d')
+                hora = now.strftime("%H:%M:%S")
+                #Recuperamos los valores de pantalla de cnfirmacion
+                monedaOrigen = form.monedaOrigen.data
+                monedaDestino = form.monedaDestino.data
+                importeOrigen = form.importeOrigen.data
+                importeDestino = form.importeDestino.data
+                queries.insertaCompra((fecha, hora, monedaOrigen, importeOrigen, monedaDestino, importeDestino))
+                return redirect(url_for("movimientosCrypto"))
             
-            if form.validate():
+            elif form.validate():
 
                 if form.calc.data:
-                    #Reseteamos los hidden con la información a guardar
-                    form.from_currency_hidden.data = form.to_currency_hidden.data = form.from_quantity_hidden.data = ""
+                    monedaActual = "EUR"
+                    #Reseteamos los campos de la ventana de confirmacion
+                    form.monedaOrigen.data = form.monedaDestino.data = form.importeOrigen.data = form.importeDestino.data = form.precio_unitario.data = ""
                     #validamos que tenemos importe suficiente para convertir en la moneda seleccionada (EUR ilimitados)
                     monedaActual = form.from_currency.data
                     if (monedaActual != 'EUR'):
@@ -92,18 +102,12 @@ def compraCrypto():
                         #Calculamos el importe en la nueva moneda
                         form.to_quantity.data = form.from_quantity.data * precioUnitario
                         #Asignamos los valores a los hidden
-                        form.from_currency_hidden.data = form.from_currency.data
-                        form.to_currency_hidden.data = form.to_currency.data
-                        form.from_quantity_hidden.data = form.from_quantity.data
-                        #Bloqueamos los campos editables para evitar incongruencia de datos al guardar los registros
-                        form.from_currency.render_kw = {"class":"uk-disabled"}
-                        form.to_currency.render_kw = {"class":"uk-disabled"}
-                        form.from_quantity.render_kw = {"readonly":"readonly"}
-
-                elif form.submit.data:
-                    queries.insertaCompra((fecha, hora, form.from_currency_hidden.data, form.from_quantity_hidden.data, form.to_currency_hidden.data, form.to_quantity.data))
-                    return redirect(url_for("movimientosCrypto"))
-                
+                        form.monedaOrigen.data = form.from_currency.data
+                        form.monedaDestino.data = form.to_currency.data
+                        form.importeOrigen.data = form.from_quantity.data
+                        form.importeDestino.data = form.to_quantity.data
+                        form.precioUnitario.data = form.precio_unitario.data
+                    
             return render_template("compra.html", form=form,  cryptosDisponibles=listaCrypto)
 
         else:

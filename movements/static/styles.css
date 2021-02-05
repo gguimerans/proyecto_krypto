@@ -48,7 +48,8 @@ fieldset select, input{
     margin: 0 !important;
 }
 
-fieldset div.uk-margin div {
+/*fieldset div.uk-margin div {*/
+.uk-fieldset div.uk-margin div{
     width: 50%;
     padding: 0 10%;
 }
