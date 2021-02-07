@@ -6,9 +6,8 @@ La instalación de esta aplicación se realiza sobre python3
 ## Instalación de dependencias:
 
 1. Instalar python3 introduciendo el siguiente código en el terminal:
-
-~~~$ sudo apt-get update~~~
-~~~$ sudo apt-get install python3.6~~~
+'''$ sudo apt-get update'''
+'''$ sudo apt-get install python3.6'''
 
 
 2. Instalar SQLITE3
