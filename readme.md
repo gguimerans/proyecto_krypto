@@ -36,14 +36,13 @@ La instalación de esta aplicación se realiza sobre python3
 
 ## Obtener API key de coinmarketcap:
 
-    Acceder a la URL:https://coinmarketcap.com/api/ y registrarse de modo gratuito para obtener su API Key
+    - Acceder a la URL:https://coinmarketcap.com/api/ y registrarse de modo gratuito para obtener su API Key
 
 ## Fichero de configuración:
 
-    Renombre su config_template.py como config.py.
-    Introducir una clave secreta.
-    Introducir la API KEY obtenida.
-    Introducir la ruta a la base de datos.
+    1. Renombra el archivo config_template.py como config.py.
+    2. Introducir tu clave secreta.
+    3. Introducir la API KEY obtenida en coinmarket.
 
 ## Ejecución:
 
