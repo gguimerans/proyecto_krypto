@@ -59,6 +59,7 @@ mensajes = []
 @app.route("/", methods=["GET"])
 def movimientosCrypto():
     movimientos = ()
+    mensajes.clear()
     try:
         movimientos = queries.getMovimientosCrypto()
     except Exception as e:
@@ -70,6 +71,7 @@ def movimientosCrypto():
 @app.route("/compra", methods=["GET", "POST"])
 def compraCrypto():
     listaCrypto = ()
+    mensajes.clear()
 
     try:        
         form = MovementForm()
@@ -139,6 +141,7 @@ def compraCrypto():
 
 @app.route("/estado", methods=["GET", "POST"])
 def statusCrypto():
+    mensajes.clear()
     totalEuros = 0
     valorActual = 0
     try:
