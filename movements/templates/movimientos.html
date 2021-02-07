@@ -36,7 +36,7 @@
                                                 <td class="uk-width-small">{{ registro["from_quantity"] }}</td>
                                                 <td class="uk-width-small">{{ registro["to_currency"] }}</td>
                                                 <td class="uk-width-small">{{ registro["to_quantity"] }}</td>
-                                                <td class="uk-width-small">{{ registro["from_quantity"]/registro["to_quantity"]}}</td>
+                                                <td class="uk-width-small">{{ registro["precio_unitario"] }}</td>
                                 </tbody>        
                                         </tr>          
                         {% endfor %}   
@@ -47,11 +47,7 @@
         {% endif %}              
                             
         <div class="uk-margin border-top">
-                <form class="uk-form-stacked" action="compra">
-                        <button type="submit" class="uk-button uk-button-secondary uk-button-large">+</button>
-                </form>        
-                <form action="estado">
-                        <button type="submit" class="uk-button uk-button-secondary uk-button-large">Estado</button>
-                </form>
+                                <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="compra">Compra de cryptomonedas</a>
+                                <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="estado">Estado de la inversión</a>
         </div>                             
 {% endblock %}

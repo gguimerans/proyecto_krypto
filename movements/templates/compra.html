@@ -15,6 +15,7 @@
 {% block bloque_de_formato %}
         <form action="compra" method="post">
                 {{ form.hidden_tag() }}
+                {% set canConfirm = form.to_quantity.data %}
                 <fieldset class="uk-fieldset">
                         <div class="uk-margin">
                                 <div>                                
@@ -62,7 +63,9 @@
                                 </div>
                         </div>
                         <div class="uk-margin border-top">
-                                <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="#" uk-toggle="target: #confirmForm">Aceptar</a>
+                                {% if canConfirm %}
+                                        <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="#" uk-toggle="target: #confirmForm">Aceptar</a>
+                                {% endif %}        
                                 <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="compra">Resetear Formulario</a>
                                 <a class="button uk-button uk-button-secondary uk-button-small" role="button" href="/">Volver</a>
                         </div>
@@ -104,7 +107,7 @@
                                         </div>
                                         <div class="uk-margin border-top">
                                                 {{ form.submit(class="button uk-button uk-button-secondary uk-button-small") }}
-                                                <button class="button uk-button uk-button-secondary uk-button-small uk-modal-close" type="button">Cancelar</button>
+                                                <a class="button uk-button uk-button-secondary uk-button-small uk-modal-close" role="button" href="/">Cancelar</a>
                                         </div>
                                 </fieldset>
                         </form>

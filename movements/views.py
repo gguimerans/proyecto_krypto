@@ -54,7 +54,7 @@ def getPrecioUnitarioCrypto(params):
     return data["data"]["quote"][params[2]]["price"]
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def movimientosCrypto():
     movimientos = queries.getMovimientosCrypto()
     return render_template("movimientos.html", movimientos=movimientos)
@@ -73,7 +73,7 @@ def compraCrypto():
                 now = datetime.now()
                 fecha = now.strftime('%Y-%m-%d')
                 hora = now.strftime("%H:%M:%S")
-                #Recuperamos los valores de pantalla de cnfirmacion
+                #Recuperamos los valores de pantalla de confirmacion
                 monedaOrigen = form.monedaOrigen.data
                 monedaDestino = form.monedaDestino.data
                 importeOrigen = form.importeOrigen.data
@@ -93,7 +93,7 @@ def compraCrypto():
                         saldoMonedaActual = float(request.form[monedaActual])
                         if form.from_quantity.data > saldoMonedaActual:
                             form.from_quantity.errors.append("no hay saldo suficiente de la moneda seleccionada: %d%s" %(saldoMonedaActual, monedaActual))                            
-                            raise Exception
+                            raise Exception("Error por saldo insuficiente")
                     
                     #Consultamos el precio unitario de la crypto llamando a la API
                     precioUnitario = getPrecioUnitarioCrypto((1, monedaActual, form.to_currency.data))
@@ -114,8 +114,8 @@ def compraCrypto():
             return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
         
     except Exception as e:
-        print("Error en el submit del formulario: {}", format(type(e).__name__, e))
-        #return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
+        print("Error en el submit del formulario: {}". format(type(e).__name__, e))
+        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
 
 
 @app.route("/estado", methods=["GET", "POST"])
