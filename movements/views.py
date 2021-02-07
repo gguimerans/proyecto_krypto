@@ -5,8 +5,9 @@ from datetime import date, datetime
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from tools.dbaccess import queriesDB
+from tools.apicomm import CryptoAPI, PeticionError
 import json
-from tools.apicomm import CryptoAPI
+import sqlite3
 
 DBFILE = app.config["DBFILE"]
 queries = queriesDB(DBFILE)
@@ -68,8 +69,9 @@ def movimientosCrypto():
 
 @app.route("/compra", methods=["GET", "POST"])
 def compraCrypto():
+    listaCrypto = ()
 
-    try:
+    try:        
         form = MovementForm()
         listaCrypto = cargaMonedasDisponibles(form.from_currency)
 
@@ -120,9 +122,19 @@ def compraCrypto():
         else:
             return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
         
+    except sqlite3.Error as e:
+        print("**ERROR**🔧: Acceso a base de datos: {} - {}". format(type(e).__name__, e))
+        mensajes.append("Error en acceso a base de datos. Consulte con el administrador.")
+        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto, mensajes=mensajes)
+    except PeticionError as e:        
+        print("**ERROR**🔧: Acceso a la APi de conexión: {} - {}". format(type(e).__name__, e))
+        mensajes.append("Error en acceso a la API de conexión. Consulte con el administrador.")
+        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto, mensajes=mensajes)   
     except Exception as e:
-        print("Error en el submit del formulario: {}". format(type(e).__name__))
-        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
+        print("Error en la conexion al ejecutar la operación :  {} - {}". format(type(e).__name__, e))
+        mensajes.append("Ha habido un error. Consulte con el administrador.")
+        return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto, mensajes=mensajes)
+        
 
 
 @app.route("/estado", methods=["GET", "POST"])
@@ -160,8 +172,14 @@ def statusCrypto():
 
         #Valor actual: cálculo de Total de euros invertidos + Saldo de euros invertidos (ganancia/perdida) + Valor de euros de nuestras cryptos (inversión atrapada)
         valorActual = totalEuros + saldoEuros + saldoCryptoenEuros
+    except sqlite3.Error as e:
+        print("**ERROR**🔧: Acceso a base de datos: {} - {}". format(type(e).__name__, e))
+        mensajes.append("Error en acceso a base de datos. Consulte con el administrador.")
+    except PeticionError as e:        
+        print("**ERROR**🔧: Acceso a la API de conexión: {} - {}". format(type(e).__name__, e))
+        mensajes.append("Error en acceso a la API de conexión. Consulte con el administrador.")   
     except Exception as e:
-        print("Error en la conexion con la BBDD al ejecutar la operación :  {} - {}". format(type(e).__name__, e))
+        print("Error en la conexion:  {} - {}". format(type(e).__name__, e))
         mensajes.append("Ha habido un error. Consulte con el administrador.")
     finally:
         return render_template("estado.html", totalEuros=totalEuros, valorActual=valorActual, mensajes=mensajes)

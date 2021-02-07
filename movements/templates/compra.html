@@ -14,6 +14,9 @@
 
 
 {% block bloque_de_formato %}
+        {% for mensaje in mensajes %}
+        <p class="err-msg">{{ mensaje }}</p>
+        {% endfor %}
         <form action="compra" method="post">
                 {{ form.hidden_tag() }}
                 {% set canConfirm = form.to_quantity.data %}
