@@ -7,14 +7,14 @@ La instalación de esta aplicación se realiza sobre python3
 
 1. Instalar python3 introduciendo el siguiente código en el terminal:
 
-~~~$ sudo apt-get update
-$ sudo apt-get install python3.6~~~
+~~~$ sudo apt-get update~~~
+~~~$ sudo apt-get install python3.6~~~
 
 
 2. Instalar SQLITE3
    
-~~~$ sudo apt update
-$ sudo apt install sqlite3~~~
+~~~$ sudo apt update~~~
+~~~$ sudo apt install sqlite3~~~
 
 3. Crear y activar un entorno virtual para poder ejecutar la aplicación:
 
