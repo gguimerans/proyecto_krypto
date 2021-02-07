@@ -34,6 +34,8 @@ La instalación de esta aplicación se realiza sobre python3
         FLASK_APP=run.py
         FLASK_ENV=development
 
+4. Consultar el archivo requirements.txt para consultar las versiones de los programas instalados
+
 ## Obtener API key de coinmarketcap:
 
     - Acceder a la URL:https://coinmarketcap.com/api/ y registrarse de modo gratuito para obtener su API Key
