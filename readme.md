@@ -12,13 +12,13 @@ La instalación de esta aplicación se realiza sobre python3
 
 2. Instalar SQLITE3
    
-~~~$ sudo apt update~~~
-~~~$ sudo apt install sqlite3~~~
+```$ sudo apt update```
+```$ sudo apt install sqlite3```
 
 3. Crear y activar un entorno virtual para poder ejecutar la aplicación:
 
    - Crear el entorno 
-~~~python -m venv venv~~~
+```python -m venv venv```
 
     - Activar el entorno virtual
   
@@ -27,7 +27,7 @@ La instalación de esta aplicación se realiza sobre python3
 
     - Crear las variables del entorno
 
-    ~~~pip install python - dotenv~~~
+    ```pip install python - dotenv```
 
     - Crear archivo .env:
 
