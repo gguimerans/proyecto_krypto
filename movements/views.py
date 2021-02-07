@@ -53,11 +53,18 @@ def getPrecioUnitarioCrypto(params):
     data = manejaAPI.consultaApi(params)
     return data["data"]["quote"][params[2]]["price"]
 
+mensajes = []
 
 @app.route("/", methods=["GET"])
 def movimientosCrypto():
-    movimientos = queries.getMovimientosCrypto()
-    return render_template("movimientos.html", movimientos=movimientos)
+    movimientos = ()
+    try:
+        movimientos = queries.getMovimientosCrypto()
+    except Exception as e:
+        print("Error en la conexion con la BBDD al ejecutar la operación getMovimientosCrypto:  {} - {}". format(type(e).__name__, e))
+        mensajes.append("Error en acceso a base de datos. Consulte con el administrador.")
+    finally:
+        return render_template("movimientos.html", movimientos=movimientos, mensajes=mensajes)
 
 @app.route("/compra", methods=["GET", "POST"])
 def compraCrypto():
@@ -114,41 +121,47 @@ def compraCrypto():
             return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
         
     except Exception as e:
-        print("Error en el submit del formulario: {}". format(type(e).__name__, e))
+        print("Error en el submit del formulario: {}". format(type(e).__name__))
         return render_template("compra.html", form=form, cryptosDisponibles=listaCrypto)
 
 
 @app.route("/estado", methods=["GET", "POST"])
 def statusCrypto():
-    
-    #Consulta de saldo de Euros     
-    consultaSaldo = queries.getSaldoEuros()
-
-    saldoEuros = 0
-
-    if consultaSaldo:
-        saldoEuros = consultaSaldo[0]
-
-    #Consulta de total de Euros invertidos
-    consultaTotal = queries.getEurosInvertidos()
-
     totalEuros = 0
+    valorActual = 0
+    try:
+        #Consulta de saldo de Euros
+            
+        consultaSaldo = queries.getSaldoEuros()
 
-    if consultaTotal:
-        totalEuros = consultaTotal[0]
+        saldoEuros = 0
 
-    #Consulta listado de cryptomonedas y sus valores
-    listaCrypto = getListaCryptos()
+        if consultaSaldo != 0:
+            saldoEuros = consultaSaldo[0]
 
-    #Consulta saldo Cryptomonedas: pendiente conexión con API para hacer conversión real (saldoCryptoenEuros)   
-    saldoCryptoenEuros = 0
-    if listaCrypto:
-        for registroCrypto in listaCrypto:
-            if registroCrypto["importe_destino"] > 0:
-                saldoCryptoenEuros += getPrecioUnitarioCrypto((registroCrypto["importe_destino"], registroCrypto["to_currency"], "EUR"))
+        #Consulta de total de Euros invertidos
+        consultaTotal = queries.getEurosInvertidos()
+
+        totalEuros = 0
+
+        if consultaTotal != 0:
+            totalEuros = consultaTotal[0]
+
+        #Consulta listado de cryptomonedas y sus valores
+        listaCrypto = getListaCryptos()
+
+        #Consulta saldo Cryptomonedas: pendiente conexión con API para hacer conversión real (saldoCryptoenEuros)   
+        saldoCryptoenEuros = 0
+        if listaCrypto:
+            for registroCrypto in listaCrypto:
+                if registroCrypto["importe_destino"] > 0:
+                    saldoCryptoenEuros += getPrecioUnitarioCrypto((registroCrypto["importe_destino"], registroCrypto["to_currency"], "EUR"))
 
 
-    #Valor actual: cálculo de Total de euros invertidos + Saldo de euros invertidos (ganancia/perdida) + Valor de euros de nuestras cryptos (inversión atrapada)
-    valorActual = totalEuros + saldoEuros + saldoCryptoenEuros
-
-    return render_template("estado.html", totalEuros=totalEuros, valorActual=valorActual)
+        #Valor actual: cálculo de Total de euros invertidos + Saldo de euros invertidos (ganancia/perdida) + Valor de euros de nuestras cryptos (inversión atrapada)
+        valorActual = totalEuros + saldoEuros + saldoCryptoenEuros
+    except Exception as e:
+        print("Error en la conexion con la BBDD al ejecutar la operación :  {} - {}". format(type(e).__name__, e))
+        mensajes.append("Ha habido un error. Consulte con el administrador.")
+    finally:
+        return render_template("estado.html", totalEuros=totalEuros, valorActual=valorActual, mensajes=mensajes)

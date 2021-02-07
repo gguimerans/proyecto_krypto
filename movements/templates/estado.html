@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}Estado de la inversión{% endblock %}
 
 {% block breadcrumbs %}
 <ul class="uk-breadcrumb">
@@ -13,6 +14,9 @@
 
 
 {% block bloque_de_formato %}
+        {% for mensaje in mensajes %}
+                <p class="err-msg">{{ mensaje }}</p>
+        {% endfor %}
         <form action="estado" method="get">    
                 <fieldset class="uk-fieldset"></fieldset>            
                         <div class="uk-margin">

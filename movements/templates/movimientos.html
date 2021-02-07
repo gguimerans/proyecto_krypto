@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}Listado de movimientos{% endblock %}
 
 {% block breadcrumbs %}
 <ul class="uk-breadcrumb">
@@ -12,6 +13,9 @@
 {% block h2 %}<h2 class="title_text uk-text-left">Movimientos</h2>{% endblock %}
 
 {% block bloque_de_formato %}
+        {% for mensaje in mensajes %}
+                <p class="err-msg">{{ mensaje }}</p>
+        {% endfor %}
         {% if movimientos|length > 0 %} 
                 <div class="uk-overflow-auto centrarTabla">                                                    
                         <table class="uk-table uk-table-divider uk-table-hover uk-table-small uk-table-justify ">

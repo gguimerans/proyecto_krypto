@@ -1,6 +1,5 @@
 import sqlite3
 
-
 class manejarDB:
     def __init__(self, dbpath):
         self.path = dbpath

@@ -22,3 +22,4 @@ class CryptoAPI:
                 return datos
         else:
             raise PeticionError("Error en consulta: {}".format(results.status_code))
+
