@@ -185,4 +185,4 @@ def statusCrypto():
         print("Error en la conexion:  {} - {}". format(type(e).__name__, e))
         mensajes.append("Ha habido un error. Consulte con el administrador.")
     finally:
-        return render_template("estado.html", totalEuros=totalEuros, valorActual=valorActual, mensajes=mensajes)
+        return render_template("estado.html", totalEuros=saldoEuros*(-1), valorActual=valorActual, mensajes=mensajes)

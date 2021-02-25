@@ -57,7 +57,7 @@ class queriesDB:
         return self.db.consultaBD("SELECT date, time, from_currency, from_quantity, to_currency, to_quantity, (from_quantity/to_quantity) as precio_unitario FROM tabla_movimientos;")  
 
     def getSaldoEuros(self):
-        return self.db.consultaBDFetchOne("""SELECT M2.importe_from - M.importe_to as saldoEuros
+        return self.db.consultaBDFetchOne("""SELECT M.importe_to - M2.importe_from as saldoEuros
                 FROM
                 (SELECT coalesce(sum(to_quantity), 0) as importe_to
                 FROM tabla_movimientos
